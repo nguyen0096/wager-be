@@ -9,3 +9,10 @@ CREATE TABLE wagers (
     amount_sold DECIMAL,
     placed_at TIMESTAMP
 );
+
+CREATE TABLE purchases (
+    id BIGSERIAL PRIMARY KEY,
+    wager_id BIGSERIAL,
+    buying_price DECIMAL,
+    bought_at TIMESTAMP
+);

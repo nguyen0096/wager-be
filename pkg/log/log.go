@@ -15,7 +15,6 @@ const DefaultZapConfig = `
 	"encoding": "json",
 	"outputPaths": ["stdout", "/tmp/logs"],
 	"errorOutputPaths": ["stderr"],
-	"initialFields": {"foo": "bar"},
 	"encoderConfig": {
 		"messageKey": "message",
 		"levelKey": "level",

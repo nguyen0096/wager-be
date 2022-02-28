@@ -7,10 +7,12 @@ import (
 	"os"
 	"os/signal"
 	"time"
-	"wager-be/pkg/config"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-logr/logr"
+
+	"wager-be/internal/service"
+	"wager-be/pkg/config"
 )
 
 type Server interface {
@@ -20,11 +22,19 @@ type Server interface {
 type server struct {
 	logger     logr.Logger
 	httpServer *http.Server
+
+	// services
+	wagerService service.WagerService
 }
 
-func New(logger logr.Logger, cfg config.ServerConfig) Server {
+func New(
+	logger logr.Logger,
+	cfg config.ServerConfig,
+	wagerService service.WagerService,
+) Server {
 	s := &server{
-		logger: logger,
+		logger:       logger,
+		wagerService: wagerService,
 	}
 
 	s.httpServer = &http.Server{
@@ -40,7 +50,9 @@ func New(logger logr.Logger, cfg config.ServerConfig) Server {
 	api := r.Group("/api")
 	v1 := api.Group("/v1")
 	{
-		v1.GET("")
+		v1.POST("/wagers", s.handleCreateWager)
+		v1.GET("/wagers", s.handleListWager)
+		v1.POST("/buy/:wager_id", s.handleBuy)
 	}
 	s.httpServer.Handler = r
 

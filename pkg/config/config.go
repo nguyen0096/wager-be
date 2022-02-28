@@ -9,7 +9,7 @@ import (
 
 type ConfigSchema struct {
 	Server   ServerConfig   `json:"server"`
-	Postgres PostgresConfig ` json:"postgres"`
+	Database DatabaseConfig ` json:"database"`
 }
 
 type ServerConfig struct {
@@ -17,7 +17,7 @@ type ServerConfig struct {
 	Port int    `json:"port"`
 }
 
-type PostgresConfig struct {
+type DatabaseConfig struct {
 	Database        string `json:"database"`
 	Username        string `json:"username"`
 	Password        string `json:"password"`
@@ -34,6 +34,7 @@ func LoadConfig() (*ConfigSchema, error) {
 		return nil, err
 	}
 
+	viper.SetEnvPrefix("wager")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "__"))
 	viper.AutomaticEnv()
 

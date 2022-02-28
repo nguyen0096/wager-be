@@ -1,0 +1,3 @@
+DROP TABLE wagers IF EXISTS;
+
+DROP TABLE purchases IF EXISTS;

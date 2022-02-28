@@ -1,1 +1,0 @@
-DROP TABLE wagers IF EXISTS;
