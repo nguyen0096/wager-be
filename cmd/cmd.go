@@ -15,5 +15,13 @@ func New() *cobra.Command {
 		},
 	})
 
+	root.AddCommand(&cobra.Command{
+		Use:   "migrate",
+		Short: "init schema",
+		Run: func(cmd *cobra.Command, args []string) {
+			initSchema()
+		},
+	})
+
 	return root
 }

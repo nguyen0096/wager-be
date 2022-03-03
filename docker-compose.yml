@@ -1,13 +1,39 @@
 version: "3.1"
 
+x-wager-common:
+  &wager-common-env
+  WAGER_DATABASE__HOST: db
+  WAGER_DATABASE__PORT: 5432
+  WAGER_DATABASE__USERNAME: wager
+  WAGER_DATABASE__PASSWORD: wager
+  WAGER_DATABASE__DATABASE: wagerdb
+
 services:
-  postgres:
-    container_name: wagerdb
+  db:
     image: postgres:14-alpine
     restart: always
     ports:
-      - 5444:5432
+      - 5432:5432
     environment:
       POSTGRES_DB: wagerdb
       POSTGRES_USER: wager
       POSTGRES_PASSWORD: wager
+
+  app:
+    image: wager-be:local
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      <<: *wager-common-env
+
+  migrate:
+    image: wager-be:local
+    restart: on-failure
+    entrypoint: ./wager-be migrate
+    depends_on:
+      - app
+    environment:
+      <<: *wager-common-env

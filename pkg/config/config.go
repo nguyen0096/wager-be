@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"strings"
 
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 )
 
@@ -29,19 +30,21 @@ type DatabaseConfig struct {
 }
 
 func LoadConfig() (*ConfigSchema, error) {
-	viper.SetConfigType("yaml")
-	if err := viper.ReadConfig(bytes.NewBuffer(DefaultConfig)); err != nil {
+	v := viper.New()
+	v.SetEnvPrefix("wager")
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "__"))
+	v.AutomaticEnv()
+
+	v.SetConfigType("yaml")
+	if err := v.ReadConfig(bytes.NewBuffer(DefaultConfig)); err != nil {
 		return nil, err
 	}
-
-	viper.SetEnvPrefix("wager")
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "__"))
-	viper.AutomaticEnv()
 
 	cfg := ConfigSchema{}
-	if err := viper.Unmarshal(&cfg); err != nil {
+	if err := v.Unmarshal(&cfg, func(c *mapstructure.DecoderConfig) {
+		c.TagName = "json"
+	}); err != nil {
 		return nil, err
 	}
-
 	return &cfg, nil
 }
